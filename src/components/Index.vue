@@ -1,5 +1,11 @@
 <template>
-  <div class="index-bg"><h1>Vue.js + Typescript</h1></div>
+  <div class="index-bg">
+    <h1>Vue.js + Typescript</h1>
+    <h5>
+      개인 개발용 웹사이트 입니다.
+      보시는 바와 같이 Vue와 typescript로 개발할 예정입니다.
+    </h5>
+  </div>
 </template>
 
 <script lang="ts">
