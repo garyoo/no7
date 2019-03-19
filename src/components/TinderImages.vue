@@ -1,18 +1,26 @@
 <template>
   <div>
-    <div class="thumb-nail-wrapper" v-for="(item, idx) in items" v-bind:key="idx" v-on:mouseover="hover(item)">
+    <div class="thumb-nail-wrapper" v-for="(item, idx) in items" v-bind:key="idx" v-on:mouseover="hover(item)" v-on:click="popModal(item)">
       <div class="thumb-nail-name">
-        <span style="font-weight: bold;">{{item.name}}</span>
+        <span style="font-weight: bold;">{{item.name}}, {{item.age|| '?'}}</span>
       </div>
       <div class="thumb-nail" v-bind:style="{ 'background-image': 'url('+ item.url +')'}">
+      </div>
+    </div>
+    <div v-if="showModal" class="modal" v-on:click="closeModal">
+      <div v-if="currentItem" style="width:100%;height:100%;">
+        <div v-for="(item, idx) in currentItem.existsValue" v-bind:key="idx" class="modal-thumb">
+          <div class="thumb-nail" v-bind:style="{ 'background-image': 'url('+ item.url +')'}">
+          </div>
+          <div style="background-color:rgba(255,255,255, 0.5);height:30%;font-size:1.2rem;font-weight:bold;padding: 2rem;">{{item.desc ? item.desc : 'No Description'}}</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import { Vue, Component, Watch } from 'vue-property-decorator'
 import 'es6-promise/auto'
 import http from 'axios'
 
@@ -29,6 +37,9 @@ interface TinderObject {
 export default class TinderImages extends Vue {
   name: string = 'TinderImages'
   items: Array<TinderObject> = []
+  currentItem : TinderObject | null = null
+  showModal: boolean = false
+
   hover (item: TinderObject): void {
     console.log(item.existsValue)
     if (item.existsValue) {
@@ -54,11 +65,32 @@ export default class TinderImages extends Vue {
       }
     })
   }
+  popModal (item: TinderObject): void {
+    this.currentItem = item
+    this.showModal = !this.showModal
+    document.body.style.overflowY = this.showModal ? 'hidden' : 'auto'
+  }
+  closeModal (): void {
+    this.currentItem = null
+    this.showModal = !this.showModal
+    document.body.style.overflowY = this.showModal ? 'hidden' : 'auto'
+  }
+
+  @Watch('showModal')
+  modalTF(val: boolean) {
+
+  }
+
+  @Watch('currentItem')
+  onChanged(val: TinderObject) {
+    console.log(val)
+  }
+
+
 }
 </script>
 
 <style scoped>
-
   div.thumb-nail-name {
     text-align:right;
     position: absolute;
@@ -91,4 +123,24 @@ export default class TinderImages extends Vue {
     border-radius: 15px;
     border: 1px solid #fff;
   }
+  div.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.8);
+  }
+
+  div.modal div.modal-thumb {
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  div.modal-thumb > div.thumb-nail {
+    height: 70%;
+    background-size: contain;
+    border: 0;
+  }
+
 </style>

@@ -19,6 +19,7 @@
     "es6-promise": "^4.2.6",
     "express": "^4.16.4",
     "vue": "^2.5.2",
+    "vue-property-decorator": "^8.0.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
