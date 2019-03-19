@@ -1,17 +1,20 @@
 <template>
   <div class="index-bg">
-    <h1>Vue.js + Typescript</h1>
-    <h5>
-      개인 개발용 웹사이트 입니다.
-      보시는 바와 같이 Vue와 typescript로 개발할 예정입니다.
-    </h5>
+    <h1>{{title}}</h1>
+    <router-link to="/TinderImages">짜쓰</router-link>
+    <h5>No.7</h5>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  name: 'index'
+  name: 'index',
+  data () {
+    return {
+      'title': '기술 블로그'
+    }
+  }
 })
 </script>
 
