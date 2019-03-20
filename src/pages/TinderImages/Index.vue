@@ -1,19 +1,11 @@
 <template>
-  <div>
-    <div class="thumb-nail-wrapper" v-for="(item, idx) in items" v-bind:key="idx" v-on:mouseover="hover(item)" v-on:click="popModal(item)">
-      <div class="thumb-nail-name">
-        <span style="font-weight: bold;">{{item.name}}, {{item.age|| '?'}} 사진 {{item.info.length}}장</span>
-      </div>
-      <div v-if="item.info[0].video === true">
-        <video width="100%" autoplay loop controls>
-          <source v-bind:src="item.info[0].url" type="video/mp4">
-          {{item.desc}}
-        </video>
-      </div>
-      <div v-else class="thumb-nail" v-bind:style="{ 'background-image': 'url('+ item.info[0].url +')'}">
+  <div class="container-fluid bg-light">
+    <div class="row">
+      <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 thumb-nail-wrapper p-3" v-for="(item, idx) in items" v-bind:key="idx" v-on:mouseover="hover(item)" v-on:click="popModal(item)" v-bind:data-aos="idx % 4 === 0 ? `fade-left` : idx % 4 === 1 ? `fade-up` : idx % 4 === 2 ? `fade-down` : `fade-right`">
+        <Thumbnail :item="item"></Thumbnail>
       </div>
     </div>
-    <div v-if="showModal" class="modal">
+    <div v-if="showModal" class="image-modal">
       <button  v-on:click="closeModal($event)" class="close">X</button>
       <div v-if="currentItem" style="width:100%;height:100%;">
         <div style="position:absolute;top:50%;left:50px;height:100%;">
@@ -35,6 +27,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import 'es6-promise/auto'
 import http from 'axios'
+import Thumbnail from '@/components/Thumbnail.vue'
 
 interface TinderInfo {
   _id: string,
@@ -58,14 +51,17 @@ interface TinderProfile {
   info: Array<TinderInfo>
 }
 
-@Component
+@Component({
+  components: {
+    Thumbnail
+  }
+})
 export default class TinderImages extends Vue {
-  name: string = 'TinderImages';
+  name: string = 'Index.vue';
   items: Array<TinderProfile> = [];
   currentItem : TinderProfile | null = null;
   currentItemIndex: number = 0;
   showModal: boolean = false;
-
   imageNav (index: number) {
     this.currentItemIndex += index
   }
@@ -145,39 +141,16 @@ export default class TinderImages extends Vue {
     color: #fff;
     text-decoration: none;
   }
-  div.thumb-nail-name {
-    text-align:right;
-    position: absolute;
-    top: 2em;
-    right: 2em;
-    background-color:rgba(255,255,255,0.5);
-    padding: 0.5rem;
-    border-radius: 5px;
-  }
 
   div.thumb-nail-wrapper{
-    position: relative;
-    display: inline-block;
-    width: 20vw;
-    height: 20vw;
-    padding: 1rem;
+    height: 50vh;
   }
-
   div.thumb-nail-wrapper:hover{
     opacity: 0.5;
     cursor: pointer;
   }
 
-  div.thumb-nail {
-    width: 100%;
-    height: 80%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: top center;
-    border-radius: 15px;
-    border: 1px solid #fff;
-  }
-  div.modal {
+  div.image-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -186,7 +159,7 @@ export default class TinderImages extends Vue {
     background-color: rgba(0,0,0,0.8);
   }
 
-  div.modal div.modal-thumb {
+  div.image-modal div.modal-thumb {
     height: 100%;
     margin: 0 auto;
   }
@@ -194,6 +167,8 @@ export default class TinderImages extends Vue {
   div.modal-thumb > div.thumb-nail {
     height: 70%;
     background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     border: 0;
   }
 
