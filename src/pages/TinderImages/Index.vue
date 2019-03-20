@@ -73,28 +73,7 @@ export default class TinderImages extends Vue {
     result.then(res => {
       if (res.status === 200 && res.data) {
         if (res.data['images']) {
-          let data: Array<TinderProfile> = res.data['images']
-          for (let item of data) {
-            let url = item.info[0] ? item.info[0].url : ''
-            if (item.info[0].video) {
-              let req = new Request(url, {method: 'HEAD', mode: 'no-cors'})
-              fetch(req).then(res => {
-                console.log(res)
-              }).then(res => {
-                this.items.push(item)
-              }).catch(err => {
-                console.log(err)
-              })
-            } else {
-              let image = new Image()
-              image.src = url
-              image.onload = () => {
-                this.items.push(item)
-              }
-              image.onerror = () => {
-              }
-            }
-          }
+          this.items = res.data['images']
         }
       }
     })
