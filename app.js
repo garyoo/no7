@@ -1,9 +1,17 @@
 const express = require('express')
+const history = require('connect-history-api-fallback')
 const fs = require('fs')
 const http = require('http')
 const https = require('https')
 const app = express()
-app.use(express.static('dist')) // absolute or relative to CWD
+const staticFileMiddleWare = express.static(`dist`)
+app.use(staticFileMiddleWare) // absolute or relative to CWD
+app.use(history({
+  disableDotRule: true,
+  verbose: false
+}))
+app.use(staticFileMiddleWare) // absolute or relative to CWD
+
 const SSL = {
   cert: fs.readFileSync(`${__dirname}/ssl/8891e1cda7dbea2b.crt`,'utf8'),
   key: fs.readFileSync(`${__dirname}/ssl/no7.dev.private.key.pem`,'utf8'),

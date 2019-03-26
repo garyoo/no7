@@ -7,16 +7,16 @@
     </div>
     <div v-if="showModal" class="image-modal">
       <button  v-on:click="closeModal($event)" class="close">X</button>
-      <div v-if="currentItem" style="width:100%;height:100%;">
+      <div v-if="currentStore.item" style="width:100%;height:100%;">
         <div style="position:absolute;top:50%;left:50px;height:100%;">
-          <a href="#prev" v-if="currentItemIndex>0" class="image-nav prev" v-on:click="imageNav(-1)">이전</a>
+          <a href="#prev" v-if="this.currentStore.index>0" class="image-nav prev" v-on:click="imageNav(-1)">이전</a>
         </div>
-        <div class="modal-thumb" v-if="currentItem.info[currentItemIndex]">
-          <div class="thumb-nail" v-bind:style="{ 'background-image': 'url('+ currentItem.info[currentItemIndex].url +')'}"></div>
-          <div style="background-color:rgba(255,255,255, 0.5);height:30%;font-size:1.2rem;font-weight:bold;padding: 2rem;">{{currentItem.info[currentItemIndex].desc ? currentItem.info[currentItemIndex].desc : 'No Description'}}</div>
+        <div class="modal-thumb" v-if="currentStore.item.info[currentStore.index]">
+          <div class="thumb-nail" v-bind:style="{ 'background-image': 'url('+ currentStore.item.info[this.currentStore.index].url +')'}"></div>
+          <div style="background-color:rgba(255,255,255, 0.5);height:30%;font-size:1.2rem;font-weight:bold;padding: 2rem;">{{currentStore.item.info[currentItemIndex].desc ? currentStore.item.info[this.currentStore.index].desc : 'No Description'}}</div>
         </div>
         <div style="position:absolute;top:50%;right:50px;height:100%;">
-          <a href="#next" v-if="currentItemIndex<currentItem.info.length-1" class="image-nav next" v-on:click="imageNav(1)">이후</a>
+          <a href="#next" v-if="this.currentStore.index<currentStore.item.info.length-1" class="image-nav next" v-on:click="imageNav(1)">이후</a>
         </div>
       </div>
     </div>
@@ -59,35 +59,45 @@ interface TinderProfile {
 export default class TinderImages extends Vue {
   name: string = 'Index.vue';
   items: Array<TinderProfile> = [];
+  currentStore: {item: TinderProfile|null, index: number, page: number} = {item: null, index: 0, page: 1};
   currentItem : TinderProfile | null = null;
   currentItemIndex: number = 0;
   showModal: boolean = false;
   imageNav (index: number) {
+    this.currentStore.index += index
     this.currentItemIndex += index
   }
   hover (item: TinderProfile): void {
-
   }
   created (): void {
-    let result = http.post('https://api2.surveypp.com/api/getTinderImage')
-    result.then(res => {
-      if (res.status === 200 && res.data) {
-        if (res.data['images']) {
-          this.items = res.data['images']
-        }
-      }
+    this.load().then(res => {
+      console.warn(`loaded`)
     })
   }
+  async load (): Promise<void> {
+    let res = await http.post('https://api2.surveypp.com/api/getTinderImage', {page: this.currentStore.page})
+    if (res.status === 200 && res.data) {
+      if (res.data['images']) {
+        this.items = res.data['images']
+      }
+    }
+  }
+
   popModal (item: TinderProfile): void {
     this.currentItem = item
+    this.currentStore.item = item
     this.showModal = !this.showModal
     document.body.style.overflowY = this.showModal ? 'hidden' : 'auto'
   }
   closeModal (evt: Event): void {
+    console.log(evt)
     this.currentItemIndex = 0
-    this.currentItem = null
+    this.currentStore.item = null
     this.showModal = !this.showModal
     document.body.style.overflowY = this.showModal ? 'hidden' : 'auto'
+  }
+  onScroll (evt: Event): void {
+    console.log(evt)
   }
 
   @Watch('showModal')
@@ -100,6 +110,7 @@ export default class TinderImages extends Vue {
     console.log(val)
   }
 }
+
 </script>
 
 <style scoped>

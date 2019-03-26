@@ -50,7 +50,7 @@ export default class Thumbnail extends Vue {
     this.profile = this.$props['item']
     if (!this.profile) return
     if (this.profile.info[0]) {
-      this.videoTF = this.profile.info[0].video||false
+      this.videoTF = this.profile.info[0].video || false
       let url: string = this.profile.info[0].url
       if (this.videoTF) {
         this.doneTF = true
