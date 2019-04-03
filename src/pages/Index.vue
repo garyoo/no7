@@ -6,7 +6,7 @@
         <router-link to="/Blog">
           <img class="image" src="https://kr.vuejs.org/images/logo.png"/>
         </router-link>
-        <figcaption>본 웹페이지는 Vue.js로 만들었습니다</figcaption>
+        <figcaption>본 웹페이지는 Vue.js + Typescript로 만들었습니다</figcaption>
       </figure>
       <figure data-aos="fade-left" class="d-none">
         <img class="image" src="https://static.thinkster.io/topics/ts.png"/>
