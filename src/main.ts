@@ -34,6 +34,9 @@ const store = new Vuex.Store({
   mutations: {
     posts (state, payload) {
       state.posts = payload
+    },
+    comments (sate, payload) {
+
     }
   },
   getters: {
@@ -41,15 +44,35 @@ const store = new Vuex.Store({
       return state.posts
     }
   },
-  actions: {
+    actions: {
     getPost: async ({commit}) => {
       return new Promise(async (resolve, reject) => {
         let snapshot = await firebase.firestore().collection('Posts').get()
-        let docs = snapshot.docs.map(d => {
-          return {documentID: d.id, ...d.data()}
+        let ids: Array<string> = []
+        let comments: Array<Comment> = []
+
+        let docs: Array<Post> = snapshot.docs.map(d => {
+          ids.push(d.id)
+          return Object.assign({documentID: d.id, ...d.data()})
         })
+
+        for(let id of ids) {
+          let comment = await firebase.firestore().collection(`Posts/${id}/comments`).get()
+          let find = docs.find(d => d.documentID === id)
+          if (find) {
+            find.comments = Object.assign(comment.docs.map(d => d.data()))
+          }
+        }
         commit('posts', docs)
         return resolve(docs)
+      })
+    },
+    getComment: async ({commit} , payload: Post) => {
+      return new Promise( async (resolve, reject) => {
+        let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).get()
+        let rntData = comment.docs.map(d => d.data())
+        commit('comments', rntData)
+        return resolve(rntData)
       })
     },
     setComment: async ({commit}, payload: PostComment) => {
