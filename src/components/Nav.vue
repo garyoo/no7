@@ -27,18 +27,24 @@
             <!-- Using 'button-content' slot -->
             <template slot="button-content"><em>User</em></template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            <b-dropdown-item href="#" v-if="this.$store.state.isAuth">Sign Out</b-dropdown-item>
+            <b-dropdown-item href="#" to="/Login" v-else >Sign In</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
   </div>
 </template>
-
 <script lang="ts">
-export default {
-  name: 'nav'
-}
+import Vue from 'vue'
+export default Vue.extend({
+  name: 'nav',
+  created (): void {
+  },
+  mounted (): void {
+    console.log(this.$store.state.isAuth)
+  }
+})
 </script>
 
 <style scoped>

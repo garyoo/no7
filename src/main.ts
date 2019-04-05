@@ -15,6 +15,7 @@ import 'aos/dist/aos.css'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import firebaseConf from '../info/firebase.conf'
+import * as firebaseui from 'firebaseui'
 
 //INTERFACE
 import Post from './interface/Post'
@@ -26,22 +27,27 @@ Vue.use(VueAxios, axios)
 Vue.use(Vuex)
 
 firebase.initializeApp(firebaseConf)
+Vue.prototype.$firebase = firebase.app()
+Vue.prototype.$firebaseAuth = new firebaseui.auth.AuthUI(firebase.app().auth())
 
 const store = new Vuex.Store({
   state: {
-    posts: []
+    posts: [],
+    isAuth: false
   },
   mutations: {
     posts (state, payload) {
       state.posts = payload
     },
     comments (sate, payload) {
-
     }
   },
   getters: {
     posts: (state) => {
       return state.posts
+    },
+    isAuth: (state) => {
+      return state.isAuth
     }
   },
     actions: {
@@ -57,7 +63,7 @@ const store = new Vuex.Store({
         })
 
         for(let id of ids) {
-          let comment = await firebase.firestore().collection(`Posts/${id}/comments`).get()
+          let comment = await firebase.firestore().collection(`Posts/${id}/comments`).orderBy('dt','asc').get()
           let find = docs.find(d => d.documentID === id)
           if (find) {
             find.comments = Object.assign(comment.docs.map(d => d.data()))
@@ -69,7 +75,7 @@ const store = new Vuex.Store({
     },
     getComment: async ({commit} , payload: Post) => {
       return new Promise( async (resolve, reject) => {
-        let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).get()
+        let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).orderBy('dt','asc').get()
         let rntData = comment.docs.map(d => d.data())
         commit('comments', rntData)
         return resolve(rntData)
@@ -81,7 +87,8 @@ const store = new Vuex.Store({
         //set({comments: [payload] }, {merge: true})
         return resolve()
       })
-
+    },
+    getAuth: async ({commit}) => {
 
     }
   }

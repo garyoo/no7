@@ -82,7 +82,7 @@ import PostComment from '../interface/PostComment'
   props: ['post']
 })
 
-export default class Thumbnail extends Vue {
+export default class PostCommentCls extends Vue {
   name: string = 'Post'
   postData: Post | null = null
   comment: PostComment | null = null
@@ -90,6 +90,7 @@ export default class Thumbnail extends Vue {
   commentSaving: boolean = false
 
   created () {
+    console.log(this.$store.getters)
     this.postData = this.$props['post']
     if (this.postData) {
       let _postComment: PostComment = {
@@ -119,7 +120,7 @@ export default class Thumbnail extends Vue {
       this.comment.dt = new Date().valueOf()
       this.commentSaving = true
       this.$store.dispatch('setComment', this.comment).then(res => {
-        console.log(res)
+
       }).catch(err => {
         console.log(err)
       }).then(res => {
@@ -131,7 +132,6 @@ export default class Thumbnail extends Vue {
   }
 
   getComment (): void {
-    console.log(this.postData)
     this.$store.dispatch('getComment', this.comment).then(res => {
       if (this.postData) this.postData.comments = res
     })
