@@ -24,7 +24,7 @@ export default Vue.extend({
     }
   },
   mounted (): void {
-    this.$firebaseAuth.start('#firebase-login', {
+    const config = {
       signInSuccessUrl: './LoginSuccess',
       tosUrl: './Blog',
       privacyPolicyUrl: () => {
@@ -48,7 +48,11 @@ export default Vue.extend({
           ]
         }
       ]
-    })
+    }
+    if (this.$firebaseUI.isPendingRedirect()) {
+      //  this.$firebaseAuth.reset()
+    }
+    this.$firebaseUI.start('#firebase-login', config)
   },
   methods: {
   }

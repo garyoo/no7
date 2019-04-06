@@ -15,12 +15,7 @@ export default Vue.extend({
     }
   },
   created (): void {
-    this.$firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log(user.displayName)
-        if (user.displayName) this.userName = user.displayName
-      }
-    })
+
   }
 })
 </script>
