@@ -10,12 +10,13 @@ export default Vue.extend({
   name: 'LoginSuccess',
   data () {
     return {
+      userId: '',
       userName: '',
       userEmail: ''
     }
   },
   created (): void {
-
+    this.userName = this.$store.state.user.displayName
   }
 })
 </script>

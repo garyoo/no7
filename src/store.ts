@@ -34,6 +34,9 @@ export default new Vuex.Store({
     },
     setUser (state, payload) {
       state.user = payload
+    },
+    setAuth (state, payload) {
+      state.isAuth = payload
     }
   },
   getters: {

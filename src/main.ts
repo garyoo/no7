@@ -26,6 +26,9 @@ Vue.prototype.$firebaseUI = firebaseUI
 firebaseApp.auth().onAuthStateChanged(user => {
   if (user) {
     store.commit('setUser', user)
+    store.commit('setAuth', true)
+    console.log(user)
+
     /*
     state.user = user
     console.log(firebaseApp.auth().currentUser)

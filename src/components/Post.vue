@@ -35,7 +35,7 @@
             <hr/>
           </div>
         </div>
-        <div class="row">
+        <div class="row"  v-if="$store.state.isAuth">
           <div class="col-12">
             <form>
               <div class="form-group row">
@@ -69,6 +69,11 @@
             </form>
           </div>
         </div>
+        <div v-else class="row">
+          <div class="col-12">
+            <h5>로그인을 하시면 댓글을 달 수 있어요</h5>
+          </div>
+        </div>
       </div>
     </div>
 </template>
@@ -90,7 +95,7 @@ export default class PostCommentCls extends Vue {
   commentSaving: boolean = false
 
   created () {
-    console.log(this.$store.getters)
+    console.log(this.$store.state.isAuth)
     this.postData = this.$props['post']
     if (this.postData) {
       let _postComment: PostComment = {
