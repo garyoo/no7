@@ -17,15 +17,18 @@ Vue.use(Vuex)
 
 */
 // Watching Auth
-const state = {
-  posts: [],
-  isAuth: false,
-  user: null
-}
-
 export default new Vuex.Store({
   plugins: [createPersistedState()],
-  state: state,
+  state: {
+    posts: [],
+    isAuth: false,
+    user: {
+      displayName: '',
+      email: '',
+      photoURL: '',
+      uid: ''
+    }
+  },
   mutations: {
     posts (state, payload) {
       state.posts = payload
@@ -37,6 +40,9 @@ export default new Vuex.Store({
     },
     setAuth (state, payload) {
       state.isAuth = payload
+    },
+    signOut (state, payload) {
+      state.user = payload
     }
   },
   getters: {
@@ -80,6 +86,7 @@ export default new Vuex.Store({
     },
     setComment: async ({commit}: any, payload: PostComment) => {
       return new Promise(async (resolve, reject) => {
+        console.log(payload)
         await firebase.firestore().collection('Posts').doc(payload.documentID).collection('comments').add(payload)
         // set({comments: [payload] }, {merge: true})
         return resolve()

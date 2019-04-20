@@ -44,11 +44,8 @@
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-12 col-sm-6 mt-2">
-                  <b-form-input v-model="comment.author" placeholder="이름" type="text"></b-form-input>
-                </div>
-                <div class="col-12 col-sm-6 mt-2">
-                  <b-form-input v-model="comment.password" placeholder="password" type="password" autocomplete></b-form-input>
+                <div class="col-12 text-left mt-2">
+                  {{comment.author}}
                 </div>
               </div>
               <div class="form-group row">
@@ -93,27 +90,24 @@ export default class PostCommentCls extends Vue {
   comment: PostComment | null = null
   commentValid: boolean = false
   commentSaving: boolean = false
-
   created () {
-    console.log(this.$store.state.isAuth)
     this.postData = this.$props['post']
-    if (this.postData) {
-      let _postComment: PostComment = {
-        documentID: this.postData.documentID,
-        author: '',
-        password: '',
-        title: '',
-        content: '',
-        dt: 0
+    if (this.$store) {
+      if (this.$store.state.user && this.postData) {
+        this.comment = {
+          documentID: this.postData.documentID,
+          author: this.$store.state.user.displayName,
+          title: '',
+          content: '',
+          dt: 0
+        }
       }
-      this.comment = _postComment
     }
   }
 
   clearComment (): void {
     if (this.comment) {
       this.comment.author = ''
-      this.comment.password = ''
       this.comment.title = ''
       this.comment.content = ''
       this.comment.dt = 0
@@ -124,6 +118,9 @@ export default class PostCommentCls extends Vue {
     if (this.comment) {
       this.comment.dt = new Date().valueOf()
       this.commentSaving = true
+
+      console.log(this.comment)
+
       this.$store.dispatch('setComment', this.comment).then(res => {
 
       }).catch(err => {
@@ -144,7 +141,7 @@ export default class PostCommentCls extends Vue {
 
   @Watch('comment', { immediate: false, deep: true })
   validComment (val: PostComment): void {
-    if (val.password.length > 3 && val.content.length && val.author.length) {
+    if (val.content.length) {
       this.commentValid = true
     } else {
       this.commentValid = false
