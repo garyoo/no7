@@ -15,7 +15,11 @@
         <div class="row">
           <div class="col-12" v-for="(comment, idx) in postData.comments" v-bind:key="idx">
             <div class="border rounded my-3 p-4">
-              <small class="float-right">{{comment.dt ? new Date(comment.dt).toLocaleString() : ''}}</small>
+              <div class="float-right">
+                <small>{{comment.dt ? new Date(comment.dt).toLocaleString() : ''}}</small>
+                <b-button size="sm" variant="danger" v-if="isMyComment" v-on:click="deleteComment(comment)">X</b-button>
+              </div>
+
               <div class="text-left">
                 <p>{{comment.title}}</p>
               </div>
@@ -79,7 +83,6 @@
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import Post from '../interface/Post'
 import PostComment from '../interface/PostComment'
-
 @Component({
   props: ['post']
 })
@@ -96,6 +99,7 @@ export default class PostCommentCls extends Vue {
       if (this.$store.state.user && this.postData) {
         this.comment = {
           documentID: this.postData.documentID,
+          uid: this.$store.state.user.uid,
           author: this.$store.state.user.displayName,
           title: '',
           content: '',
@@ -104,10 +108,29 @@ export default class PostCommentCls extends Vue {
       }
     }
   }
-
+  isMyComment (comment: PostComment): boolean {
+    if (this.$store.state.user.uid) {
+      if (this.$store.state.user.uid === comment.uid) return true
+    }
+    return false
+  }
+  deleteComment (comment: PostComment): void {
+    if (confirm(`댓글을 삭제하시겠습니까?`)) {
+      this.commentSaving = true
+      console.log(comment)
+      this.$store.dispatch('deleteComment', comment).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      }).then(res => {
+        this.commentSaving = false
+        this.getComment()
+        this.clearComment()
+      })
+    }
+  }
   clearComment (): void {
     if (this.comment) {
-      this.comment.author = ''
       this.comment.title = ''
       this.comment.content = ''
       this.comment.dt = 0
@@ -118,9 +141,6 @@ export default class PostCommentCls extends Vue {
     if (this.comment) {
       this.comment.dt = new Date().valueOf()
       this.commentSaving = true
-
-      console.log(this.comment)
-
       this.$store.dispatch('setComment', this.comment).then(res => {
 
       }).catch(err => {

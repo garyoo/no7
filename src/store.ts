@@ -69,7 +69,9 @@ export default new Vuex.Store({
           let comment = await firebase.firestore().collection(`Posts/${id}/comments`).orderBy('dt', 'asc').get()
           let find = docs.find(d => d.documentID === id)
           if (find) {
-            find.comments = Object.assign(comment.docs.map(d => d.data()))
+            find.comments = Object.assign(comment.docs.map(d => {
+              return {_id: d.id, ...d.data()}
+            }))
           }
         }
         commit('posts', docs)
@@ -79,17 +81,28 @@ export default new Vuex.Store({
     getComment: async ({commit}: any, payload: Post) => {
       return new Promise(async (resolve, reject) => {
         let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).orderBy('dt', 'asc').get()
-        let rntData = comment.docs.map(d => d.data())
+        let rntData = comment.docs.map(d => {
+          return {_id: d.id, ...d.data()}
+        })
         commit('comments', rntData)
         return resolve(rntData)
       })
     },
     setComment: async ({commit}: any, payload: PostComment) => {
       return new Promise(async (resolve, reject) => {
-        console.log(payload)
         await firebase.firestore().collection('Posts').doc(payload.documentID).collection('comments').add(payload)
         // set({comments: [payload] }, {merge: true})
         return resolve()
+      })
+    },
+    deleteComment: async ({commit}: any, payload: PostComment) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: any = await firebase.firestore().collection('Posts').doc(payload.documentID).collection('comments').doc(payload._id).delete()
+          return resolve(result)
+        } catch (e) {
+          return reject(e)
+        }
       })
     },
     getAuth: async ({commit}: any) => {
