@@ -8,8 +8,10 @@ import Blog from '../pages/Blog/index.vue'
 import BlogWrite from '../pages/Blog/write.vue'
 import Login from '../pages/Login/Index.vue'
 import LoginSuccess from '../pages/Login/LoginSuccess.vue'
-Vue.use(Router)
-export default new Router({
+import NotFoundComponent from '../pages/404.vue'
+Vue.use(Router);
+
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -30,7 +32,10 @@ export default new Router({
     {
       path: '/Blog/write',
       name: 'BlogWrite',
-      component: BlogWrite
+      component: BlogWrite,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/Login',
@@ -43,13 +48,23 @@ export default new Router({
       component: LoginSuccess,
       meta: {
         requiresAuth: true
-      },
-      beforeEnter: (from, to, next) => {
-        if (from.meta.requiresAuth && !store.getters.user) {
-          return next('/Login')
-        }
-        return next()
       }
+    },
+    {
+      path: '*',
+      component: NotFoundComponent
     }
   ]
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(t=> t.meta.requiresAuth)) {
+    if (!store.state.isAuth) {
+      return next('/Login')
+    }
+  }
+  return next()
+});
+
+
+export default router

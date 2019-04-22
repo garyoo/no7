@@ -2,13 +2,13 @@
 <template>
   <div>
     <TopNav></TopNav>
-    <div id="blog-containers" class="container" v-if="postLoading">
+    <div id="blog-containers" class="container mt-4" v-if="postLoading">
       <div class="row">
         <PostComponent v-for="(post, index) in posts" :post="post" v-bind:key="index" data-aos="fade-up" v-bind:data-aos-duration="(index+1)*1000"></PostComponent>
       </div>
     </div>
-    <div class="container mt-4" v-else>
-      <h1>Loading...</h1>
+    <div class="container mt-4 py-4" v-else>
+      <h1 class="mt-4">Loading...</h1>
     </div>
   </div>
 </template>

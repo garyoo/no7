@@ -17,6 +17,9 @@ export default Vue.extend({
   },
   created (): void {
     this.userName = this.$store.state.user.displayName
+  },
+  mounted (): void {
+    this.$router.push('/Blog')
   }
 })
 </script>

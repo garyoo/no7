@@ -178,7 +178,6 @@ export default class PostCommentCls extends Vue {
     text-align: justify;
   }
   div.blog-content-column{
-    min-height: calc(100vh - 60px);
   }
   div.blog-content {
     height: 100%;

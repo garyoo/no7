@@ -1,6 +1,7 @@
 <template>
   <div>
     <TopNav></TopNav>
+    <div>asd</div>
   </div>
 </template>
 
@@ -13,7 +14,9 @@ import TopNav from '../../components/Nav.vue'
   }
 })
 export default class BlogWrite extends Vue {
-
+  created (): void {
+    console.log(1)
+  }
 }
 </script>
 
