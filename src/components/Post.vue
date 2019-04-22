@@ -7,7 +7,7 @@
               <div style="background: rgba(255, 255, 255, 0.7)" class="blog-content">
                 <h3>{{postData.title}}</h3>
                 <h5 class="text-right">{{new Date(postData.dt).toLocaleString()}}</h5>
-                <p class="blog-content-text" v-html="postData.content"></p>
+                <div class="blog-content-text" v-html="postData.content"></div>
               </div>
             </div>
           </div>
@@ -164,7 +164,6 @@ export default Vue.extend({
         this.comment.dt = new Date().valueOf()
         this.commentSaving = true
         this.$store.dispatch('setComment', this.comment).then(res => {
-
         }).catch(err => {
           console.log(err)
         }).then(res => {
@@ -194,97 +193,12 @@ export default Vue.extend({
       deep: true
     }
   }
-  /*
-  name: string = 'Post'
-  postData: Post | null = null
-  comment: PostComment | null = null
-  commentValid: boolean = false
-  commentSaving: boolean = false
-  created () {
-    this.postData = this.$props['post']
-    if (this.$store) {
-      if (this.$store.state.user && this.postData) {
-        this.comment = {
-          documentID: this.postData.documentID,
-          uid: this.$store.state.user.uid,
-          author: this.$store.state.user.displayName,
-          title: '',
-          content: '',
-          dt: 0
-        }
-      }
-    }
-  }
-
-  isMyComment (comment: PostComment): boolean {
-    console.log(this.$store.state.user)
-    if (!this.$store.state.user) return false
-    if (this.$store.state.user.uid) {
-      if (this.$store.state.user.uid === comment.uid) return true
-    }
-    return false
-  }
-
-  deleteComment (comment: PostComment): void {
-    if (confirm(`댓글을 삭제하시겠습니까?`)) {
-      this.commentSaving = true
-      console.log(comment)
-      this.$store.dispatch('deleteComment', comment).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
-      }).then(res => {
-        this.commentSaving = false
-        this.getComment()
-        this.clearComment()
-      })
-    }
-  }
-  clearComment (): void {
-    if (this.comment) {
-      this.comment.title = ''
-      this.comment.content = ''
-      this.comment.dt = 0
-    }
-  }
-
-  saveComment (): void {
-    if (this.comment) {
-      this.comment.dt = new Date().valueOf()
-      this.commentSaving = true
-      this.$store.dispatch('setComment', this.comment).then(res => {
-
-      }).catch(err => {
-        console.log(err)
-      }).then(res => {
-        this.commentSaving = false
-        this.getComment()
-        this.clearComment()
-      })
-    }
-  }
-
-  getComment (): void {
-    this.$store.dispatch('getComment', this.comment).then(res => {
-      if (this.postData) this.postData.comments = res
-    })
-  }
-
-  @Watch('comment', { immediate: false, deep: true })
-  validComment (val: PostComment): void {
-    if (val.content.length) {
-      this.commentValid = true
-    } else {
-      this.commentValid = false
-    }
-  }
-   */
 })
 
 </script>
 
-<style scoped>
-  p.blog-content-text, .blog-content-comment {
+<style>
+  .blog-content-text, .blog-content-comment {
     white-space: pre-wrap;
     word-wrap: break-word;
     font-family: inherit;
@@ -303,5 +217,8 @@ export default Vue.extend({
   }
   div.blog-content-wrapper::after {
     opacity: 0.5;
+  }
+  div.blog-content-text img {
+    max-width: 100%;
   }
 </style>

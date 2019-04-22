@@ -42,18 +42,7 @@ export default Vue.extend({
           provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
           scopes: [
             'public_profile',
-            'email',
-            'user_likes',
-            'user_friends'
-          ]
-        },
-        {
-          provider: firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-          scopes: [
-            'public_profile',
-            'email',
-            'user_likes',
-            'user_friends'
+            'email'
           ]
         }
       ]

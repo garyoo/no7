@@ -50,7 +50,7 @@ export default new Vuex.Store({
   actions: {
     getPost: async ({commit}: any) => {
       return new Promise(async (resolve, reject) => {
-        let snapshot = await firebase.firestore().collection('Posts').get()
+        let snapshot = await firebase.firestore().collection('Posts').orderBy('dt','desc').get()
         let ids: Array<string> = []
         let docs: Array<Post> = snapshot.docs.map(d => {
           ids.push(d.id)
@@ -69,21 +69,39 @@ export default new Vuex.Store({
         return resolve(docs)
       })
     },
+    setPost: async({commit}: any, payload: Post) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let snapshot = await firebase.firestore().collection('Posts').add(payload)
+          return resolve(snapshot)
+        } catch (e) {
+          return reject(e.message)
+        }
+      })
+    },
     getComment: async ({commit}: any, payload: Post) => {
       return new Promise(async (resolve, reject) => {
-        let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).orderBy('dt', 'asc').get()
-        let rntData = comment.docs.map(d => {
-          return {_id: d.id, ...d.data()}
-        })
-        commit('comments', rntData)
-        return resolve(rntData)
+        try {
+          let comment = await firebase.firestore().collection(`Posts/${payload.documentID}/comments`).orderBy('dt', 'asc').get()
+          let rntData = comment.docs.map(d => {
+            return {_id: d.id, ...d.data()}
+          })
+          commit('comments', rntData)
+          return resolve(rntData)
+        } catch (e) {
+          return reject(e.message)
+        }
       })
     },
     setComment: async ({commit}: any, payload: PostComment) => {
       return new Promise(async (resolve, reject) => {
-        await firebase.firestore().collection('Posts').doc(payload.documentID).collection('comments').add(payload)
-        // set({comments: [payload] }, {merge: true})
-        return resolve()
+        try {
+          let result = await firebase.firestore().collection('Posts').doc(payload.documentID).collection('comments').add(payload)
+          // set({comments: [payload] }, {merge: true})
+          return resolve(result)
+        } catch (e) {
+          return reject(e.message)
+        }
       })
     },
     deleteComment: async ({commit}: any, payload: PostComment) => {
