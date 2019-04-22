@@ -4,18 +4,9 @@ import firebase from 'firebase'
 import Post from './interface/Post'
 import PostComment from './interface/PostComment'
 import createPersistedState from 'vuex-persistedstate'
-import {firebaseApp} from './firebase/firebaseApp'
+// import {firebaseApp} from './firebase/firebaseApp'
 Vue.use(Vuex)
-/*
 
-    this.$firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        console.log(user.displayName)
-        if (user.displayName) this.userName = user.displayName
-      }
-    })
-
-*/
 // Watching Auth
 export default new Vuex.Store({
   plugins: [createPersistedState()],

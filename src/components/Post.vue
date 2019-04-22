@@ -17,7 +17,7 @@
             <div class="border rounded my-3 p-4">
               <div class="float-right">
                 <small>{{comment.dt ? new Date(comment.dt).toLocaleString() : ''}}</small>
-                <b-button size="sm" variant="danger" v-if="isMyComment" v-on:click="deleteComment(comment)">X</b-button>
+                <b-button size="sm" variant="danger" v-if="isMyComment(comment)" v-on:click="deleteComment(comment)">X</b-button>
               </div>
 
               <div class="text-left">
@@ -80,14 +80,121 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue } from 'vue-property-decorator'
 import Post from '../interface/Post'
 import PostComment from '../interface/PostComment'
-@Component({
-  props: ['post']
-})
+export default Vue.extend({
+  props: ['post'],
+  data () {
+    return {
+      name: 'Post',
+      postData: {
+        documentID: '',
+        _id: '',
+        title: '',
+        subTitle: '',
+        categories: [],
+        dt: 0,
+        content: '',
+        backgroundImage : '',
+        comments : [] as PostComment[]
+      } as Post,
+      comment: {
+        _id: '',
+        documentID: '',
+        uid: '',
+        title: '',
+        author: '',
+        content: '',
+        dt: 0
+      } as PostComment,
+      commentValid: false,
+      commentSaving: false
+    }
+  },
+  created (): void {
+    this.postData = this.$props['post']
+    if (this.$store) {
+      if (this.$store.state.user && this.postData) {
+        this.comment = {
+          documentID: this.postData.documentID,
+          uid: this.$store.state.user.uid,
+          author: this.$store.state.user.displayName,
+          title: '',
+          content: '',
+          dt: 0
+        }
+      }
+    }
+  },
+  computed: {
 
-export default class PostCommentCls extends Vue {
+  },
+  methods: {
+    isMyComment (comment: PostComment) : boolean {
+      if (!this.$store.state.user) return false
+      if (this.$store.state.user.uid) {
+        if (this.$store.state.user.uid === comment.uid) return true
+      }
+      return false
+    },
+    deleteComment (comment: PostComment) : void {
+      if (confirm(`댓글을 삭제하시겠습니까?`)) {
+        this.commentSaving = true
+        this.$store.dispatch('deleteComment', comment).then(res => {
+          console.log(res)
+        }).catch(err => {
+          console.log(err)
+        }).then(res => {
+          this.commentSaving = false
+          this.getComment()
+          this.clearComment()
+        })
+      }
+    },
+    clearComment (): void {
+      if (this.comment) {
+        this.comment.title = ''
+        this.comment.content = ''
+        this.comment.dt = 0
+      }
+    },
+    saveComment (): void {
+      if (this.comment) {
+        this.comment.dt = new Date().valueOf()
+        this.commentSaving = true
+        this.$store.dispatch('setComment', this.comment).then(res => {
+
+        }).catch(err => {
+          console.log(err)
+        }).then(res => {
+          this.commentSaving = false
+          this.getComment()
+          this.clearComment()
+        })
+      }
+    },
+    getComment (): void {
+      this.$store.dispatch('getComment', this.comment).then(res => {
+        if (this.postData) {
+          this.postData.comments = res
+        }
+      })
+    }
+  },
+  watch: {
+    comment: {
+      handler (val: PostComment): void {
+        if (val.content.length) {
+          this.commentValid = true
+        } else {
+          this.commentValid = false
+        }
+      },
+      deep: true
+    }
+  }
+  /*
   name: string = 'Post'
   postData: Post | null = null
   comment: PostComment | null = null
@@ -108,12 +215,16 @@ export default class PostCommentCls extends Vue {
       }
     }
   }
+
   isMyComment (comment: PostComment): boolean {
+    console.log(this.$store.state.user)
+    if (!this.$store.state.user) return false
     if (this.$store.state.user.uid) {
       if (this.$store.state.user.uid === comment.uid) return true
     }
     return false
   }
+
   deleteComment (comment: PostComment): void {
     if (confirm(`댓글을 삭제하시겠습니까?`)) {
       this.commentSaving = true
@@ -167,7 +278,9 @@ export default class PostCommentCls extends Vue {
       this.commentValid = false
     }
   }
-}
+   */
+})
+
 </script>
 
 <style scoped>
