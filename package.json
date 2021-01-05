@@ -17,7 +17,7 @@
   "dependencies": {
     "@firebase/firestore-types": "^1.1.1",
     "@types/quill": "^2.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "connect-history-api-fallback": "^1.6.0",
     "es6-promise": "^4.2.6",
     "express": "^4.16.4",
